@@ -1,0 +1,434 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Consolas", monospace;
+}
+body {
+    background: #000;
+    color: #0ff;
+    overflow-x: hidden;
+}
+#starCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+}
+
+/* ===== 星空动画样式 ===== */
+.star {
+    position: fixed;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+    z-index: -1;
+}
+
+.star.twinkle {
+    animation: twinkle 3s ease-in-out infinite;
+}
+
+.star.float {
+    animation: float 8s ease-in-out infinite;
+}
+
+.star.pulse {
+    animation: pulse-star 2s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-star {
+    0%, 100% { 
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1.3);
+    }
+}
+
+.meteor {
+    position: fixed;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(100, 200, 255, 0.6);
+    animation: meteor-fall 1s linear;
+    z-index: -1;
+}
+
+@keyframes meteor-fall {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(200px, 200px);
+    }
+}
+.scan-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #0ff, transparent);
+    animation: scan 3s linear infinite;
+}
+@keyframes scan {
+    0% {top:0; opacity:0.8;}
+    100% {top:100%; opacity:0;}
+}
+
+/* ===== 银河背景效果 ===== */
+.galaxy-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 1200px;
+    height: 1200px;
+    margin-left: -600px;
+    margin-top: -600px;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.galaxy {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: 0;
+    left: 0;
+    background: 
+        /* 核心亮点 */
+        radial-gradient(circle 10% at 50% 50%, rgba(220, 200, 255, 0.8) 0%, rgba(180, 140, 255, 0.5) 30%, transparent 80%),
+        /* 主旋臂1 - 青蓝色 */
+        conic-gradient(from 0deg at 50% 50%, 
+            rgba(100, 220, 255, 0.6) 0deg,
+            rgba(80, 200, 255, 0.4) 30deg,
+            rgba(60, 180, 255, 0.25) 60deg,
+            transparent 90deg,
+            transparent 180deg,
+            rgba(60, 180, 255, 0.3) 210deg,
+            rgba(80, 200, 255, 0.5) 240deg,
+            rgba(100, 220, 255, 0.6) 270deg,
+            transparent 315deg,
+            rgba(100, 220, 255, 0.6) 360deg
+        ),
+        /* 主旋臂2 - 紫色，错开90度 */
+        conic-gradient(from 90deg at 50% 50%, 
+            rgba(180, 100, 255, 0.55) 0deg,
+            rgba(160, 80, 255, 0.4) 30deg,
+            rgba(140, 60, 255, 0.2) 60deg,
+            transparent 90deg,
+            transparent 180deg,
+            rgba(140, 60, 255, 0.25) 210deg,
+            rgba(160, 80, 255, 0.45) 240deg,
+            rgba(180, 100, 255, 0.55) 270deg,
+            transparent 315deg,
+            rgba(180, 100, 255, 0.55) 360deg
+        ),
+        /* 次旋臂 - 粉青色，错开45度 */
+        conic-gradient(from 45deg at 50% 50%, 
+            rgba(150, 200, 220, 0.5) 0deg,
+            rgba(120, 180, 210, 0.3) 30deg,
+            transparent 60deg,
+            transparent 180deg,
+            rgba(120, 180, 210, 0.25) 210deg,
+            rgba(150, 200, 220, 0.45) 240deg,
+            transparent 300deg,
+            rgba(150, 200, 220, 0.5) 360deg
+        ),
+        /* 次旋臂2 - 品红色，错开135度 */
+        conic-gradient(from 135deg at 50% 50%, 
+            rgba(220, 140, 180, 0.48) 0deg,
+            rgba(200, 110, 160, 0.3) 30deg,
+            transparent 60deg,
+            transparent 180deg,
+            rgba(200, 110, 160, 0.25) 210deg,
+            rgba(220, 140, 180, 0.45) 240deg,
+            transparent 300deg,
+            rgba(220, 140, 180, 0.48) 360deg
+        ),
+        /* 外部光晕 */
+        radial-gradient(ellipse 85% 65% at 50% 50%, rgba(100, 220, 255, 0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 65% 85% at 50% 50%, rgba(180, 100, 255, 0.12) 0%, transparent 70%);
+    
+    box-shadow: 
+        inset 0 0 80px rgba(100, 220, 255, 0.3),
+        inset 0 0 150px rgba(180, 100, 255, 0.2),
+        inset 0 0 250px rgba(100, 200, 255, 0.1),
+        0 0 120px rgba(100, 220, 255, 0.2);
+    
+    animation: galaxy-rotate 300s linear infinite;
+    filter: blur(30px);
+}
+
+/* 添加发光旋臂效果 */
+.galaxy::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: 
+        conic-gradient(from 0deg at 50% 50%,
+            rgba(100, 220, 255, 0.4) 0deg,
+            rgba(80, 200, 255, 0.2) 25deg,
+            transparent 50deg,
+            transparent 150deg,
+            rgba(80, 200, 255, 0.2) 200deg,
+            rgba(100, 220, 255, 0.3) 225deg,
+            transparent 270deg,
+            transparent 330deg,
+            rgba(100, 220, 255, 0.4) 360deg
+        );
+    animation: galaxy-rotate 300s linear infinite reverse;
+    filter: blur(40px);
+    z-index: -1;
+}
+
+@keyframes galaxy-rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.glitch-text {
+    text-shadow:
+        0 0 5px #0ff,
+        0 0 10px #0ff,
+        2px 2px #f0f;
+    animation: flicker 2s infinite alternate;
+}
+@keyframes flicker {
+    0% {opacity:0.9;}
+    100% {opacity:1;}
+}
+/* 点击脉冲发光 */
+@keyframes pulse {
+    0% {box-shadow: 0 0 0 #0ff;}
+    100% {box-shadow: 0 0 25px #0ff;}
+}
+.pulse-active {
+    animation: pulse 0.4s ease-out;
+}
+.console-header {
+    position: relative;
+    width: 100%;
+    padding: 20px;
+    border-bottom: 1px solid #0ff4;
+    background: rgba(0,20,40,0.6);
+    backdrop-filter: blur(8px);
+    text-align: center;
+}
+.top-buttons {
+    margin:10px 0;
+}
+.top-buttons button {
+    padding: 8px 16px;
+    margin:0 8px;
+    background:#007777;
+    border:1px solid #0ff;
+    color:#fff;
+    cursor:pointer;
+}
+.top-buttons button:hover {
+    background:#0ff;
+    color:#000;
+    box-shadow:0 0 10px #0ff;
+}
+.search-box {
+    margin-top: 15px;
+}
+#searchInput {
+    width: 400px;
+    padding: 8px 12px;
+    background: #001122;
+    border: 1px solid #0ff;
+    color: #0ff;
+    font-size: 16px;
+    outline: none;
+}
+#searchBtn {
+    padding: 8px 20px;
+    margin-left: 10px;
+    background: #00a3a3;
+    border: none;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+}
+#searchBtn:hover {
+    background: #0ff;
+    box-shadow: 0 0 12px #0ff;
+}
+.dimension-nav {
+    position: fixed;
+    top: 200px;
+    left: 20px;
+    width: 180px;
+    padding: 20px;
+    border: 1px solid #0ff4;
+    background: rgba(0,15,30,0.7);
+    backdrop-filter: blur(6px);
+}
+.dimension-nav h3 {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #0ff3;
+    padding-bottom: 8px;
+}
+.dimension-nav li {
+    list-style: none;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.dimension-nav li:hover, li.active {
+    border: 1px solid #0ff;
+    box-shadow: 0 0 8px #0ff5;
+    background: rgba(0,20,40,0.5);
+}
+.archive-container {
+    margin-left: 240px;
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 280px);
+    gap: 25px;
+    padding: 10px;
+}
+.page-box {
+    margin-left:240px;
+    margin-top:20px;
+    padding:10px;
+}
+.page-box button {
+    padding:6px 12px;
+    margin:0 4px;
+    background:#002233;
+    border:1px solid #0ff;
+    color:#0ff;
+    cursor:pointer;
+}
+.page-box button.active-page {
+    background:#0ff;
+    color:#000;
+}
+.universe-card {
+    padding: 18px;
+    border: 1px solid #0ff5;
+    background: rgba(0,25,45,0.65);
+    backdrop-filter: blur(4px);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.universe-card:hover {
+    transform: translateY(-6px);
+}
+/* 危险等级配色 */
+.danger-low { border-color:#0ff; }
+.danger-mid { border-color:#ffd000; }
+.danger-midhigh { border-color:#ff8800; }
+.danger-high { border-color:#ff4444; }
+.danger-max { border-color:#990000; box-shadow:0 0 10px #f006; }
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 999;
+}
+.modal-content {
+    width: 650px;
+    margin: 80px auto;
+    padding: 30px;
+    border: 1px solid #0ff;
+    background: #000e1b;
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+.wide-modal {
+    width: 800px;
+}
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #f44;
+}
+.form-item {
+    margin:14px 0;
+}
+.form-item label {
+    display:block;
+    margin-bottom:6px;
+}
+.form-item input, .form-item select, .form-item textarea {
+    width:100%;
+    padding:8px;
+    background:#001422;
+    border:1px solid #0ff5;
+    color:#0ff;
+}
+.submit-btn {
+    width:100%;
+    padding:10px;
+    background:#00aaaa;
+    border:none;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:10px;
+}
+.submit-btn:hover {
+    background:#0ff;
+    box-shadow:0 0 12px #0ff;
+}
+#modalTitle {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #0ff4;
+    padding-bottom: 10px;
+}
+#modalBody p {
+    line-height: 1.8;
+    margin: 10px 0;
+    font-size: 15px;
+}
+#historyList {
+    margin-top:20px;
+    max-height:60vh;
+    overflow-y:auto;
+}
+.history-item {
+    padding:10px;
+    border:1px solid #0ff3;
+    margin-bottom:10px;
+}

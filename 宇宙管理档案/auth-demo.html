@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宇宙管理档案 - 用户认证</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 14px;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .form-group.active {
+            display: block;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .success {
+            color: #27ae60;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .user-info.show {
+            display: block;
+        }
+
+        .user-info p {
+            margin: 8px 0;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .user-info strong {
+            color: #667eea;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            margin-top: 15px;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌌 宇宙管理档案</h1>
+            <p>用户认证系统</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('login')">登录</button>
+            <button class="tab" onclick="switchTab('register')">注册</button>
+        </div>
+
+        <!-- 登录表单 -->
+        <div class="form-section active" id="loginSection">
+            <div class="form-group active">
+                <label for="loginUsername">用户名</label>
+                <input type="text" id="loginUsername" placeholder="输入用户名">
+            </div>
+            <div class="form-group active">
+                <label for="loginPassword">密码</label>
+                <input type="password" id="loginPassword" placeholder="输入密码">
+            </div>
+            <button onclick="handleLogin()">登录</button>
+            <div class="error" id="loginError"></div>
+            <div class="success" id="loginSuccess"></div>
+        </div>
+
+        <!-- 注册表单 -->
+        <div class="form-section" id="registerSection">
+            <div class="form-group active">
+                <label for="registerUsername">用户名</label>
+                <input type="text" id="registerUsername" placeholder="输入用户名（3个字符以上）">
+            </div>
+            <div class="form-group active">
+                <label for="registerEmail">邮箱</label>
+                <input type="email" id="registerEmail" placeholder="输入邮箱地址">
+            </div>
+            <div class="form-group active">
+                <label for="registerPassword">密码</label>
+                <input type="password" id="registerPassword" placeholder="输入密码（6个字符以上）">
+            </div>
+            <div class="form-group active">
+                <label for="confirmPassword">确认密码</label>
+                <input type="password" id="confirmPassword" placeholder="再次输入密码">
+            </div>
+            <button onclick="handleRegister()">注册</button>
+            <div class="error" id="registerError"></div>
+            <div class="success" id="registerSuccess"></div>
+        </div>
+
+        <!-- 用户信息显示 -->
+        <div class="user-info" id="userInfo">
+            <p><strong>用户名：</strong> <span id="displayUsername"></span></p>
+            <p><strong>邮箱：</strong> <span id="displayEmail"></span></p>
+            <p><strong>ID：</strong> <span id="displayId"></span></p>
+            <button class="logout-btn" onclick="handleLogout()">登出</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        // 切换标签页
+        function switchTab(tab) {
+            // 隐藏所有表单
+            document.getElementById('loginSection').classList.remove('active');
+            document.getElementById('registerSection').classList.remove('active');
+
+            // 移除所有标签页活跃状态
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+            // 显示选中的表单
+            if (tab === 'login') {
+                document.getElementById('loginSection').classList.add('active');
+                document.querySelectorAll('.tab')[0].classList.add('active');
+            } else {
+                document.getElementById('registerSection').classList.add('active');
+                document.querySelectorAll('.tab')[1].classList.add('active');
+            }
+        }
+
+        // 注册
+        async function handleRegister() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            const errorEl = document.getElementById('registerError');
+            const successEl = document.getElementById('registerSuccess');
+            errorEl.classList.remove('show');
+            successEl.classList.remove('show');
+
+            // 验证
+            if (!username || !email || !password || !confirmPassword) {
+                errorEl.textContent = '请填写所有字段';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorEl.textContent = '两次输入的密码不一致';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            if (password.length < 6) {
+                errorEl.textContent = '密码至少6个字符';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    successEl.textContent = '注册成功！请切换到登录页面';
+                    successEl.classList.add('show');
+                    // 清空表单
+                    document.getElementById('registerUsername').value = '';
+                    document.getElementById('registerEmail').value = '';
+                    document.getElementById('registerPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                    // 3秒后自动切换到登录页
+                    setTimeout(() => switchTab('login'), 2000);
+                } else {
+                    errorEl.textContent = data.message || '注册失败';
+                    errorEl.classList.add('show');
+                }
+            } catch (error) {
+                console.error('注册错误:', error);
+                errorEl.textContent = '网络错误，请检查服务器是否运行';
+                errorEl.classList.add('show');
+            }
+        }
+
+        // 登录
+        async function handleLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            const errorEl = document.getElementById('loginError');
+            const successEl = document.getElementById('loginSuccess');
+            errorEl.classList.remove('show');
+            successEl.classList.remove('show');
+
+            if (!username || !password) {
+                errorEl.textContent = '请输入用户名和密码';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // 保存令牌和用户信息
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('username', data.user.username);
+                    localStorage.setItem('email', data.user.email);
+                    localStorage.setItem('userId', data.user.id);
+
+                    successEl.textContent = '登录成功！';
+                    successEl.classList.add('show');
+
+                    // 显示用户信息
+                    showUserInfo(data.user);
+
+                    // 清空登录表单
+                    document.getElementById('loginUsername').value = '';
+                    document.getElementById('loginPassword').value = '';
+                } else {
+                    errorEl.textContent = data.message || '登录失败';
+                    errorEl.classList.add('show');
+                }
+            } catch (error) {
+                console.error('登录错误:', error);
+                errorEl.textContent = '网络错误，请检查服务器是否运行';
+                errorEl.classList.add('show');
+            }
+        }
+
+        // 显示用户信息
+        function showUserInfo(user) {
+            document.getElementById('displayUsername').textContent = user.username;
+            document.getElementById('displayEmail').textContent = user.email;
+            document.getElementById('displayId').textContent = user.id;
+            document.getElementById('userInfo').classList.add('show');
+
+            // 隐藏登录/注册表单
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('registerSection').style.display = 'none';
+            document.querySelectorAll('.tab').forEach(t => t.style.display = 'none');
+        }
+
+        // 登出
+        function handleLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('userId');
+
+            document.getElementById('userInfo').classList.remove('show');
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('registerSection').style.display = 'block';
+            document.querySelectorAll('.tab').forEach(t => t.style.display = 'block');
+
+            switchTab('login');
+        }
+
+        // 页面加载时检查是否已登录
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                const user = {
+                    username: localStorage.getItem('username'),
+                    email: localStorage.getItem('email'),
+                    id: localStorage.getItem('userId')
+                };
+                showUserInfo(user);
+            }
+        });
+    </script>
+</body>
+</html>
